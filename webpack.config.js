@@ -1,56 +1,49 @@
-/* global __dirname, require, module*/
+const path = require('path');
+const webpack = require('webpack');
 
-const webpack = require("webpack");
-const path = require("path");
-const yargs = require("yargs");
-const env = yargs.argv.env; // use --env with webpack 2
-const pkg = require("./package.json");
-const shouldExportToAMD = yargs.argv.amd;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-let libraryName = pkg.name;
+var env = process.env.NODE_ENV;   // eslint-disable-line
+var filename = 'ethjs-query';     // eslint-disable-line
+var library = 'Eth';              // eslint-disable-line
+var config = {             // eslint-disable-line
 
-let outputFile, mode;
-
-if (shouldExportToAMD) {
-  libraryName += ".amd";
-}
-
-if (env === "build") {
-  mode = "production";
-  outputFile = libraryName + ".min.js";
-} else {
-  mode = "development";
-  outputFile = libraryName + ".js";
-}
-
-const config = {
-  mode: mode,
-  entry: __dirname + "/src/index.js",
-  devtool: "source-map",
-  output: {
-    path: __dirname + "/lib",
-    filename: outputFile,
-    library: libraryName,
-    libraryTarget: shouldExportToAMD ? "amd" : "umd",
-    libraryExport: "default",
-    umdNamedDefine: true,
-    globalObject: "typeof self !== 'undefined' ? self : this",
-  },
+    entry: "./src/index.js",   
+    output: {
+      path:__dirname+ '/dist/',
+      filename: "bundle.js",
+      publicPath: '/'
+  },    
   module: {
-    rules: [
+  
+    loaders: [
+      { test: /\.js$/, loaders: ['babel-loader'], 
+      query: {
+        presets: ['es2015', 'react']
+    },
+      exclude: /node_modules/ },
       {
-        test: /(\.jsx|\.js|\.ts|\.tsx)$/,
-        use: {
-          loader: "babel-loader",
-        },
-        exclude: /(node_modules|bower_components)/,
+        test: /\.json$/,
+        loader: 'json',
       },
     ],
   },
-  resolve: {
-    modules: [path.resolve("./node_modules"), path.resolve("./src")],
-    extensions: [".json", ".js"],
+
+  output: {
+    path:__dirname+ '/umd/',
+    filename: filename + '.js',       // eslint-disable-line
+    library: library,                 // eslint-disable-line
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
   },
+  plugins: [
+    new webpack.BannerPlugin({ banner: ' /* eslint-disable */ ', raw: true, entryOnly: true }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(env),
+      minimizer: [new UglifyJsPlugin()],
+    }),
+  ],
 };
 
 module.exports = config;

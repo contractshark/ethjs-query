@@ -2,6 +2,8 @@ const format = require('ethjs-format');
 const EthRPC = require('ethjs-rpc');
 const promiseToCallback = require('promise-to-callback');
 
+const eth = new Eth(provider);
+
 module.exports = Eth;
 
 function Eth(provider, options) {

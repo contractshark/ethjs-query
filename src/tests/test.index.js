@@ -408,6 +408,10 @@ describe('ethjs-query', () => {
       done();
     });
 
+    /** 
+     * 
+    @note eth_getCompilers has been removed from JSON-RPC
+
     it('should function while eth_getCompilers', (done) => {
       const eth = new Eth(provider); // eslint-disable-line
 
@@ -420,7 +424,7 @@ describe('ethjs-query', () => {
         done();
       });
     });
-
+*/
     it('should function while eth_hashrate', (done) => {
       const eth = new Eth(provider); // eslint-disable-line
 

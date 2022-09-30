@@ -12,20 +12,19 @@
   "scripts": {
     "start": "npm test",
     "release": "npmpub",
-    "pretest": "npm run lint",
     "prepublish": "npm run build",
     "build:clean": "npm run test:clean && rimraf ./dist",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib --copy-files",
     "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack --config ./internals/webpack/webpack.config.js ./lib/index.js --progress",
     "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack --config ./internals/webpack/webpack.config.js ./lib/index.js --progress",
-    "build": "npm run build:commonjs && npm run test:lib && npm run build:umd && npm run build:umd:min",
+    "build": "npm run build:commonjs && npm run build:umd && npm run build:umd:min",
     "lint": "npm run lint:js",
     "lint:eslint": "eslint --ignore-path .gitignore --ignore-pattern **/**.min.js",
     "lint:js": "npm run lint:eslint -- . ",
     "lint:staged": "lint-staged",
     "test:clean": "rimraf ./coverage",
-    "test": "mocha ./src/tests/**/*.js -R spec --timeout 2000000",
-    "test:lib": "mocha ./lib/tests/**/*.js -R spec --timeout 2000000",
+    "test": "mocha ./src/tests/**/*.js -R spec --bail --timeout 2000000",
+    "test:lib": "mocha ./lib/tests/**/*.js -R spec --bail --timeout 2000000",
     "test-travis": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- src/tests/**/*.js -R spec --timeout 2000000",
     "coveralls": "npm run test-travis && cat ./coverage/lcov.info | coveralls"
   },
@@ -52,64 +51,68 @@
   "babel": {
     "plugins": [
       [
-        "transform-es2015-template-literals",
+        "@babel/plugin-transform-template-literals",
         {
           "loose": true
         }
       ],
-      "transform-es2015-literals",
-      "transform-es2015-function-name",
-      "transform-es2015-arrow-functions",
-      "transform-es2015-block-scoped-functions",
+      "@babel/plugin-transform-literals",
+      "@babel/plugin-transform-function-name",
+      "@babel/plugin-transform-arrow-functions",
+      "@babel/plugin-transform-block-scoped-functions",
       [
-        "transform-es2015-classes",
+        "@babel/plugin-transform-classes",
         {
           "loose": true
         }
       ],
-      "transform-es2015-object-super",
-      "transform-es2015-shorthand-properties",
+      "@babel/plugin-transform-object-super",
+      "@babel/plugin-transform-shorthand-properties",
       [
-        "transform-es2015-computed-properties",
+        "@babel/plugin-transform-computed-properties",
         {
           "loose": true
         }
       ],
       [
-        "transform-es2015-for-of",
+        "@babel/plugin-transform-for-of",
         {
           "loose": true
         }
       ],
-      "transform-es2015-sticky-regex",
-      "transform-es2015-unicode-regex",
-      "check-es2015-constants",
+      "@babel/plugin-transform-sticky-regex",
+      "@babel/plugin-transform-unicode-regex",
       [
-        "transform-es2015-spread",
+        "@babel/plugin-transform-spread",
         {
           "loose": true
         }
       ],
-      "transform-es2015-parameters",
+      "@babel/plugin-transform-parameters",
       [
-        "transform-es2015-destructuring",
+        "@babel/plugin-transform-destructuring",
         {
           "loose": true
         }
       ],
-      "transform-es2015-block-scoping",
-      "transform-object-rest-spread",
-      "transform-es3-member-expression-literals",
-      "transform-es3-property-literals",
-      "transform-async-to-generator",
-      "transform-regenerator",
-      "transform-runtime"
+      "@babel/plugin-transform-block-scoping",
+      "@babel/plugin-proposal-object-rest-spread",
+      "@babel/plugin-transform-member-expression-literals",
+      "@babel/plugin-transform-property-literals",
+      "@babel/plugin-transform-async-to-generator",
+      "@babel/plugin-transform-regenerator",
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "corejs": 2
+        }
+      ]
     ],
     "env": {
       "commonjs": {
         "plugins": [
           [
-            "transform-es2015-modules-commonjs",
+            "@babel/plugin-transform-modules-commonjs",
             {
               "loose": true
             }
@@ -119,40 +122,43 @@
     }
   },
   "dependencies": {
+    "@babel/runtime-corejs2": "^7.15.3",
     "ethjs-format": "0.2.7",
     "ethjs-rpc": "0.2.0",
-    "promise-to-callback": "^1.0.0"
+    "promise-to-callback": "^1.0.0",
+    "web3": "^1.5.2",
+    "web3-providers-http": "^1.5.2",
+    "yargs": "^17.1.1"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.3",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-arrow-functions": "^7.0.0",
+    "@babel/plugin-transform-async-to-generator": "^7.0.0",
+    "@babel/plugin-transform-block-scoped-functions": "^7.0.0",
+    "@babel/plugin-transform-block-scoping": "^7.0.0",
+    "@babel/plugin-transform-classes": "^7.0.0",
+    "@babel/plugin-transform-computed-properties": "^7.0.0",
+    "@babel/plugin-transform-destructuring": "^7.0.0",
+    "@babel/plugin-transform-for-of": "^7.0.0",
+    "@babel/plugin-transform-function-name": "^7.0.0",
+    "@babel/plugin-transform-literals": "^7.0.0",
+    "@babel/plugin-transform-member-expression-literals": "^7.0.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.0.0",
+    "@babel/plugin-transform-object-super": "^7.0.0",
+    "@babel/plugin-transform-parameters": "^7.0.0",
+    "@babel/plugin-transform-property-literals": "^7.0.0",
+    "@babel/plugin-transform-regenerator": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/plugin-transform-shorthand-properties": "^7.0.0",
+    "@babel/plugin-transform-spread": "^7.0.0",
+    "@babel/plugin-transform-sticky-regex": "^7.0.0",
+    "@babel/plugin-transform-template-literals": "^7.0.0",
+    "@babel/plugin-transform-unicode-regex": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.2.2",
-    "babel-plugin-check-es2015-constants": "6.22.0",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-es2015-arrow-functions": "6.22.0",
-    "babel-plugin-transform-es2015-block-scoped-functions": "6.22.0",
-    "babel-plugin-transform-es2015-block-scoping": "6.26.0",
-    "babel-plugin-transform-es2015-classes": "6.24.1",
-    "babel-plugin-transform-es2015-computed-properties": "6.24.1",
-    "babel-plugin-transform-es2015-destructuring": "6.23.0",
-    "babel-plugin-transform-es2015-for-of": "6.23.0",
-    "babel-plugin-transform-es2015-function-name": "6.24.1",
-    "babel-plugin-transform-es2015-literals": "6.22.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
-    "babel-plugin-transform-es2015-object-super": "6.24.1",
-    "babel-plugin-transform-es2015-parameters": "6.24.1",
-    "babel-plugin-transform-es2015-shorthand-properties": "6.24.1",
-    "babel-plugin-transform-es2015-spread": "6.22.0",
-    "babel-plugin-transform-es2015-sticky-regex": "6.24.1",
-    "babel-plugin-transform-es2015-template-literals": "6.22.0",
-    "babel-plugin-transform-es2015-unicode-regex": "6.24.1",
-    "babel-plugin-transform-es3-member-expression-literals": "6.22.0",
-    "babel-plugin-transform-es3-property-literals": "6.22.0",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-plugin-transform-regenerator": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-register": "6.26.0",
     "bignumber.js": "9.0.1",
     "chai": "4.3.4",
     "check-es3-syntax-cli": "0.2.1",
